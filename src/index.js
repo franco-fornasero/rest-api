@@ -1,5 +1,5 @@
 const express = require('express');
-
+const querystring = require("querystring");
 const morgan = require('morgan');
 const fetch = require('node-fetch');
 
@@ -56,14 +56,10 @@ coordSato = {
 
 
 async function GetLocation(distances){
-    const sistemaEcuaciones = `{
-                                    ${distances[0]}^2 = (x - ${coordKenobi.x})^2 +%2B+ (y - ${coordKenobi.y})^2,
-                                    ${distances[1]}^2 = (x - ${coordSkywalker.x})^2 +%2B+ (y - ${coordSkywalker.y})^2,
-                                    ${distances[2]}^2 = (x - ${coordSato.x})^2 +%2B+ (y - ${coordSato.y})^2
-                                }`;
+    const sistemaEcuaciones = `{${distances[0]}^2 = (x - ${coordKenobi.x})^2 + (y - ${coordKenobi.y})^2,${distances[1]}^2 = (x - ${coordSkywalker.x})^2 + (y - ${coordSkywalker.y})^2, ${distances[2]}^2 = (x - ${coordSato.x})^2 + (y - ${coordSato.y})^2}`;
+    const sistemaEcuacionesURL = encodeURIComponent(sistemaEcuaciones);
 
-
-    const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuaciones}&format=plaintext&output=JSON&appid=HWHT7U-7QKUET5T4K`;
+    const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuacionesURL}&format=plaintext&output=JSON&appid=HWHT7U-7QKUET5T4K`;
     const responseWolfram = await fetch(reqWolfram);
     const responseWolframJSON = await responseWolfram.json();
 
