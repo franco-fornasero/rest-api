@@ -56,14 +56,38 @@ coordSato = {
 
 
 async function GetLocation(distances){
-    const sistemaEcuaciones = `{${distances[0]}^2 = (x - ${coordKenobi.x})^2 + (y - ${coordKenobi.y})^2,${distances[1]}^2 = (x - ${coordSkywalker.x})^2 + (y - ${coordSkywalker.y})^2, ${distances[2]}^2 = (x - ${coordSato.x})^2 + (y - ${coordSato.y})^2}`;
+    const sistemaEcuaciones = `{(${distances[0]})^2 = (x - ${coordKenobi.x})^2 + (y - ${coordKenobi.y})^2,(${distances[1]})^2 = (x - ${coordSkywalker.x})^2 + (y - ${coordSkywalker.y})^2, (${distances[2]})^2 = (x - ${coordSato.x})^2 + (y - ${coordSato.y})^2}`;
+    //console.log(sistemaEcuaciones);
     const sistemaEcuacionesURL = encodeURIComponent(sistemaEcuaciones);
-
+    //console.log(sistemaEcuacionesURL);
     const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuacionesURL}&format=plaintext&output=JSON&appid=HWHT7U-7QKUET5T4K`;
     const responseWolfram = await fetch(reqWolfram);
     const responseWolframJSON = await responseWolfram.json();
-
-    return responseWolframJSON;
+    let coordenadas = []
+    responseWolframJSON.queryresult.pods.forEach(a => {
+        //console.log(a.title, a.id);
+        if (a.title == 'Solution' && a.id == 'Solution'){
+            a.subpods.forEach(b => {
+                coordenadas = [...coordenadas, b.plaintext];
+            });
+            //console.log(resultado);
+            return coordenadas;
+        }
+    });
+    if (coordenadas == []){
+        return "NoSolutions"
+    }else {
+        coordenadas.forEach( a => {
+            let cadenas = a.split(",");
+            //console.log(cadenas);
+            posiciones = cadenas.map(b => {
+                return parseFloat(b.substring(5));
+            });
+            
+            console.log(posiciones);
+        })
+        return posiciones;
+    }
 }
 
 
