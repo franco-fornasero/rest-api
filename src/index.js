@@ -16,13 +16,18 @@ app.use(express.json());
 // routes
 app.post('/api/topsecret', async (req, res) => {
     content = req.body;
-    // faltan chequear que los datos estén bien
     distancias = obtenerDistancias(content);
     mensajes = obtenerMensajes(content);
-    getMessage(mensajes);
-    //console.log(mensajes);
-    const jsonwaolf = await GetLocation(distancias);
-    await res.send(jsonwaolf);
+    const mensaje = getMessage(mensajes);
+    const posiciones = await GetLocation(distancias);
+    const response = {
+        "position": {
+            "x":`${posiciones[0]}`,
+            "y": `${posiciones[1]}`
+        },
+        "message":mensaje
+    }
+    await res.send(response);
 });
 
 
@@ -90,49 +95,49 @@ async function GetLocation(distances){
 }
 
 function getMessage(messages){
-    console.log('funcion');
-    /*const min = Math.min(messages[0].length, messages[1].length, messages[2].length);
-    const max = Math.max(messages[0].length, messages[1].length, messages[2].length);*/
-    /*let iKenobi = messages[0].length;
-    let iSkywalker = messages[1].length;
-    let iSato = messages[2].length;*/
+    const min = Math.min(messages[0].length, messages[1].length, messages[2].length)
     let corte = false;
     let c = 1;
-    let msg = '';
+    let msg = [];
     while(corte == false){
-        //break;
         let cadenas = [
             messages[0][messages[0].length - c],
             messages[1][messages[1].length - c],
             messages[2][messages[2].length - c]
         ]
-        console.log(cadenas);
         const palabra = retornarNoVacia(cadenas);
-        console.log(palabra);
         if (palabra == ''){
             corte = true;
         }
         else{
-            if (c = messages[0].length){
+            if (c == min){
                 corte = true
             }
             else {
                 c++;
-                msg+= ` ${palabra}`; 
             }
+            msg = [...msg, palabra];
           
         }  
     }
-    console.log(msg);
+
+    msg = msg.reverse();
+    let cadena = '';
+    msg.forEach((element, i) => {
+        i == msg.length - 1 ? cadena+= `${element}` : cadena+= `${element} `
+    });
+
+   return cadena;
+    
     
 }
 
 function retornarNoVacia(cadenas){
     let palabra = ''
     //map devuelve un array, arreglar
-    palabra = cadenas.map(mensaje => {
+    cadenas.forEach(mensaje => {
        if (mensaje != ''){
-           return mensaje;
+           palabra = mensaje; 
        }
     });
     return palabra;
