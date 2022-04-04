@@ -30,6 +30,9 @@ app.post('/api/topsecret', async (req, res) => {
     await res.send(response);
 });
 
+app.get('api/algo', (req, res) =>{
+    res.send('test');
+})
 
 // starting the server
 app.listen(app.get('port'), () => {
@@ -134,7 +137,6 @@ function getMessage(messages){
 
 function retornarNoVacia(cadenas){
     let palabra = ''
-    //map devuelve un array, arreglar
     cadenas.forEach(mensaje => {
        if (mensaje != ''){
            palabra = mensaje; 
