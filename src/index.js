@@ -30,10 +30,6 @@ app.post('/api/topsecret', async (req, res) => {
     res.send(response);
 });
 
-app.get('/api/algo', (req, res) =>{
-    res.send('test');
-})
-
 // starting the server
 app.listen(app.get('port'), () => {
     console.log(`Server on port ${3000}`);
