@@ -27,10 +27,10 @@ app.post('/api/topsecret', async (req, res) => {
         },
         "message":mensaje
     }
-    await res.send(response);
+    res.send(response);
 });
 
-app.get('api/algo', (req, res) =>{
+app.get('/api/algo', (req, res) =>{
     res.send('test');
 })
 
