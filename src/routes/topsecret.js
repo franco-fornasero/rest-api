@@ -5,9 +5,8 @@ const router = express.Router();
 var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
 
-//const app = require('../app.js');
 
-router.post('/api/topsecret', jsonParser,async (req, res) => {
+router.post('/topsecret', jsonParser,async (req, res) => {
     content = req.body;
     distancias = obtenerDistancias(content);
     mensajes = obtenerMensajes(content);
@@ -30,5 +29,7 @@ router.post('/api/topsecret', jsonParser,async (req, res) => {
     
     res.send(response);
 });
+
+
 
 module.exports = router;
