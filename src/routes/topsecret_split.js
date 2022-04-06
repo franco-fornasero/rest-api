@@ -42,7 +42,12 @@ router.post('/topsecret_split/:satellite', jsonParser, (req, res) => {
 
 
 router.get('/topsecret_split/:satellite', jsonParser,async (req, res) => {
-    res.send(file);
+    const {satellite} = req.params;
+    file.forEach(a => {
+        a.satellite = satellite;
+        res.json(satellite);
+    })
+
 });
 
 module.exports = router;
