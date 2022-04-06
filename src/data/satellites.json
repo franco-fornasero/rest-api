@@ -1,1 +1,24 @@
-[{"distance":142,"satellite":"kenobi"}]
+[
+    {
+        "distance": 325,
+        "message": [
+            "este",
+            "",
+            "",
+            "mensaje",
+            ""
+        ],
+        "satellite": "sato"
+    },
+    {
+        "distance": 999,
+        "message": [
+            "este",
+            "",
+            "",
+            "mensaje",
+            ""
+        ],
+        "satellite": "kenobi"
+    }
+]
