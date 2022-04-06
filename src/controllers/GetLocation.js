@@ -28,7 +28,7 @@ async function GetLocation(distances){
             return coordenadas;
         }
     });
-    if (coordenadas == []){
+    if (coordenadas.length == 0){
         return "NoSolutions"
     }else {
         coordenadas.forEach( a => {

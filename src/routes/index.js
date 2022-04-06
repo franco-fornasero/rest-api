@@ -13,13 +13,21 @@ router.post('/api/topsecret', jsonParser,async (req, res) => {
     mensajes = obtenerMensajes(content);
     const mensaje = GetMessage(mensajes);
     const posiciones = await GetLocation(distancias);
-    const response = {
-        "position": {
-            "x":`${posiciones[0]}`,
-            "y": `${posiciones[1]}`
-        },
-        "message":mensaje
+    let response;
+    if (posiciones == 'NoSolutions' ){
+        res.statusCode = 400;
+        response = 'RESPONSE CODE: 404'
     }
+    else {
+        response = {
+            "position": {
+                "x":`${posiciones[0]}`,
+                "y": `${posiciones[1]}`
+            },
+            "message":mensaje
+        }
+    }
+    
     res.send(response);
 });
 
