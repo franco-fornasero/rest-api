@@ -45,7 +45,7 @@ router.get('/topsecret_split/:satellite', jsonParser,async (req, res) => {
     const {satellite} = req.params;
     file.forEach(a => {
         a.satellite = satellite;
-        res.json(satellite);
+        res.json(a);
     })
 
 });
