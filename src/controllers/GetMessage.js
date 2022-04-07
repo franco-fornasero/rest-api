@@ -18,7 +18,7 @@ salteo esos caracteres pero no tomo el mensaje como inválido.
 
 function GetMessage(messages){
     let corte = false, c = 0, msg = '', flairVacios = false;
-    while (c < messages[0].length || corte == true){
+    while (c < messages[0].length && corte == true){
         let cadenas =  messages.map(a => {
             return a[c]
         });

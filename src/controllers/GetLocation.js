@@ -13,11 +13,30 @@ const coordSato = {
     'y':'100'
 };
 
+//En la función siempre me van a llegar 3 elementos, a pesar de que se puede obtener
+//con solo 2. Yo necesito saber que distancia pertenece a cada coordenada, para armar las ecuaciones.
+//Por eso GetLocation SIEMPRE recibe 3 elementos, y en un orden predeterminado que se da en ObtenerDistancias
+//Si no tengo 1 de los datos, lo mando vacío y lo ignoro, para respetar la firma que se pide.
+
 async function GetLocation(distances){
     let sistemaEcuaciones = '';
-    distances.forEach(element, i => {
-        i==distances
+    distances.forEach((element, i) => {
+        if (element != 0){
+            switch (i){
+                case 0:
+                    sistemaEcuaciones = `${sistemaEcuaciones} (${distances[0]})^2 = (x - ${coordKenobi.x})^2 + (y - ${coordKenobi.y})^2,`
+                    break;
+                case 1:
+                    sistemaEcuaciones = `${sistemaEcuaciones} (${distances[1]})^2 = (x - ${coordSkywalker.x})^2 + (y - ${coordSkywalker.y})^2,`
+                    break;
+                case 2:
+                    sistemaEcuaciones = `${sistemaEcuaciones} (${distances[2]})^2 = (x - ${coordSato.x})^2 + (y - ${coordSato.y})^2,`
+                    break;
+            }
+        }
     });
+    //  FIXME - sacar coma al final de las ecuaciuones
+    sistemaEcuaciones = `{${sistemaEcuaciones}}`;
     //`{(${distances[0]})^2 = (x - ${coordKenobi.x})^2 + (y - ${coordKenobi.y})^2,(${distances[1]})^2 = (x - ${coordSkywalker.x})^2 + (y - ${coordSkywalker.y})^2, (${distances[2]})^2 = (x - ${coordSato.x})^2 + (y - ${coordSato.y})^2}`;
     const sistemaEcuacionesURL = encodeURIComponent(sistemaEcuaciones);
     const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuacionesURL}&format=plaintext&output=JSON&appid=HWHT7U-7QKUET5T4K`;
@@ -25,31 +44,44 @@ async function GetLocation(distances){
     const responseWolframJSON = await responseWolfram.json();
     let coordenadas = []
     responseWolframJSON.queryresult.pods.forEach(a => {
-        if (a.title == 'Solution' && a.id == 'Solution'){
+        if ((a.title == 'Solution' || a.title == 'Solutions') && a.id == 'Solution'){
             a.subpods.forEach(b => {
                 coordenadas = [...coordenadas, b.plaintext];
             });
-            return coordenadas;
+            //return coordenadas;
         }
     });
     if (coordenadas.length == 0){
         return "NoSolutions"
     }else {
+        let posiciones = [];
         coordenadas.forEach( a => {
-            let cadenas = a.split(",");
-            posiciones = cadenas.map(b => {
-                return parseFloat(b.substring(5));
+            let cadenas = a.split(", ");
+            cadenas.forEach(b => {
+                posiciones = [...posiciones, parseFloat(eval(b.substring(4)))];
             });
-        })
+        });
         return posiciones;
     }
 }
 
 function obtenerDistancias(content){
-    let distances = [];
+    let distances = [ 0, 0, 0];
     content.satellites.forEach(satellite => {
-        distances = [...distances, satellite.distance];
+        satellite.name = satellite.name.toLowerCase()
+        switch (satellite.name){
+            case 'kenobi':
+                distances[0] = satellite.distance;
+                break;
+            case 'skywalker':
+                distances[1] = satellite.distance;
+                break;
+            case 'sato':
+                distances[2] = satellite.distance;
+                break;
+        }
     });
+
     return distances;    
 }
 
