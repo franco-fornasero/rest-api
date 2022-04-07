@@ -5,10 +5,11 @@ const { GetMessage, obtenerMensajes} = require('../controllers/GetMessage');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
-const file = require('../data/satellites.json');
+
 //const { response } = require('../app');
 
 router.post('/topsecret_split/:satellite', jsonParser, (req, res) => {
+    const file = require('../data/satellites.json');
     const {satellite} = req.params;
     if (satellite == 'kenobi' || satellite == 'skywalker' || satellite == 'sato'){
         let content = req.body;
@@ -41,8 +42,21 @@ router.post('/topsecret_split/:satellite', jsonParser, (req, res) => {
 });
 
 
-router.get('/topsecret_split/:satellite', jsonParser,async (req, res) => {
-    const {satellite} = req.params;
+router.get('/topsecret_split/',async (req, res) => {
+    // Si no tengo satélites o solo tengo 1 es imposible determinar la posición.
+    if (file.length < 2){
+        res.send('No se puede determinar la posición y/o el mensaje con los datos disponibles')
+    } 
+    else {
+        const satellites = require('../data/satellites.json');
+        const satellitesJSON = {satellites};
+        const mensajes = obtenerMensajes(satellitesJSON);
+        const mensaje = GetMessage(mensajes);
+
+    }
+    
+
+    
     file.forEach(a => {
         a.satellite = satellite;
         res.json(a);

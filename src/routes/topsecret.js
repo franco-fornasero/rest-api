@@ -20,11 +20,12 @@ router.post('/topsecret', jsonParser,async (req, res) => {
     else {
         response = {
             "position": {
-                "x":`${posiciones[0]}`,
-                "y": `${posiciones[1]}`
+                "x": posiciones[0],
+                "y": posiciones[1]
             },
             "message":mensaje
         }
+        res.statusCode = 200;
     }
     
     res.send(response);
