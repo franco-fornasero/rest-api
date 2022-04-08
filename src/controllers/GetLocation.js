@@ -37,20 +37,22 @@ async function GetLocation(distances){
     });
     sistemaEcuaciones = `{${sistemaEcuaciones.substring(0, sistemaEcuaciones.length - 1)}}`;
     const sistemaEcuacionesURL = encodeURIComponent(sistemaEcuaciones);
-    const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuacionesURL}&format=plaintext&output=JSON&appid=HWHT7U-7QKUET5T4K`;
+    const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuacionesURL}&format=plaintext&includepodid=Solution&output=JSON&appid=HWHT7U-7QKUET5T4K`;
     const responseWolfram = await fetch(reqWolfram);
     const responseWolframJSON = await responseWolfram.json();
     console.log(responseWolframJSON.queryresult.pods[0]);
 
     let coordenadas = []
-    responseWolframJSON.queryresult.pods.forEach(a => {
-        if (a.title == 'Solution' && a.id == 'Solution'){
-            a.subpods.forEach(b => {
-                coordenadas = [...coordenadas, b.plaintext];
-            });
-            //return coordenadas;
-        }
-    });
+    if (queryresult.pods){
+        responseWolframJSON.queryresult.pods.forEach(a => {
+            if (a.title == 'Solution' && a.id == 'Solution'){
+                a.subpods.forEach(b => {
+                    coordenadas = [...coordenadas, b.plaintext];
+                });
+                //return coordenadas;
+            }
+        });
+    }
     if (coordenadas.length == 0){
         return false;
     }else {
