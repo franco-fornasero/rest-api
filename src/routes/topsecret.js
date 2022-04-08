@@ -11,10 +11,9 @@ router.post('/topsecret', jsonParser, async (req, res) => {
     const mensajes = obtenerMensajes(content);
     const mensaje = GetMessage(mensajes);
     const posiciones = await GetLocation(distancias);
-    let response;
+    let response = '';
     if (posiciones == false || mensaje == false){
         res.statusCode = 400;
-        response = 'RESPONSE CODE: 404';
     }
     else {   
         response = {
