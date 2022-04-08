@@ -1,13 +1,7 @@
-/*
-[   ""  ,   “”      ,   “este”  ,   “es”  ,     “un”    ,     “mensaje”]
-[                       “este”  ,   “”    ,     “un”    ,     “mensaje”]
-[   ""  ,   “”      ,   ””      ,   ”es”  ,     ””      ,     ”mensaje”]
-
-
-*/
 /* Supongo que puede darse el caso de que todos los satelites que estoy controlando tengan desface,
 lo que produciría que las cadenas de mensajes quedaran de la siguiente forma incluso luego de limpiar el
 desface en la funcion "obtenerMensajes"
+
 ["", "", ...]
 ["", "", ...]
 
@@ -18,8 +12,8 @@ salteo esos caracteres pero no tomo el mensaje como inválido.
 function GetMessage(messages){
     let corte = false, c = 0, msg = '', flairVacios = false;
     while (c < messages[0].length && corte == false){
-        let cadenas =  messages.map(a => {
-            return a[c]
+        let cadenas =  messages.map(cadena => {
+            return cadena[c]
         });
         const palabra = retornarNoVacia(cadenas);
         if (palabra == ''){
@@ -40,10 +34,10 @@ function GetMessage(messages){
         return false;
     }
     else {
+        //Eliminar el primer espacio que queda en el mensaje
         msg = msg.substring(1);
         return msg;
-    }
-     
+    }     
 }
 
 function retornarNoVacia(cadenas){
