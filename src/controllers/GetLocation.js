@@ -16,7 +16,7 @@ const coordSato = {
 //En la función siempre me van a llegar 3 elementos, a pesar de que se puede obtener
 //con solo 2. Yo necesito saber que distancia pertenece a cada coordenada, para armar las ecuaciones.
 //Por eso GetLocation SIEMPRE recibe 3 elementos, y en un orden predeterminado que se da en ObtenerDistancias
-//Si no tengo 1 de los datos, lo mando vacío y lo ignoro, para respetar la firma que se pide.
+//Si no tengo 1 de los datos, lo mando como -1 y lo ignoro, para respetar la firma que se pide.
 
 async function GetLocation(distances){
     let sistemaEcuaciones = '';
@@ -41,19 +41,23 @@ async function GetLocation(distances){
     const responseWolfram = await fetch(reqWolfram);
     const responseWolframJSON = await responseWolfram.json();
     let coordenadas = []
+    //Cuando no tiene solución el sistema de ecuaciones, pods no está en el json
     if (responseWolframJSON.queryresult.pods){
         responseWolframJSON.queryresult.pods.forEach(a => {
             if (a.title == 'Solution' && a.id == 'Solution'){
                 a.subpods.forEach(b => {
                     coordenadas = [...coordenadas, b.plaintext];
                 });
-                //return coordenadas;
             }
         });
     }
     if (coordenadas.length == 0){
+        //Retorno false cuando el sistema no tiene una UNICA solución.
+        //Puede tener 2 soluciones, pero no sabría cual es la que corresponde a la posición de la nave
+        //En el caso que vengan 2 soluciones a.title es 'Solutions', entonces estaria descartando ese caso
         return false;
     }else {
+        //Adapto los datos a la firma de la funcion
         let posiciones = [];
         coordenadas.forEach( a => {
             let cadenas = a.split(", ");
@@ -66,6 +70,7 @@ async function GetLocation(distances){
 }
 
 function obtenerDistancias(content){
+    //Filtrat las distancias de la request y enviarlas en un orden predeterminado
     let distances = [-1, -1, -1];
     content.satellites.forEach(satellite => {
         satellite.name = satellite.name.toLowerCase()

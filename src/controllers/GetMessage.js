@@ -58,11 +58,11 @@ function obtenerMensajes(content){
     const lengthMin = Math.min(...messages.map(a => {
         return a.length;
     }));
-    messages.forEach(a => {
+    messages.forEach(message => {
         //Si tiene mas elementos que el array con menos elementos, entonces hay un desface 
-        if (a.length > lengthMin){
+        if (message.length > lengthMin){
             //Elimino ese desfase
-            a = a.splice(0, a.length - lengthMin);
+            message = message.splice(0, message.length - lengthMin);
         }
     });
     return messages;
