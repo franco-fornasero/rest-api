@@ -5,50 +5,30 @@ const router = express.Router();
 const bodyParser = require('body-parser')
 const jsonParser = bodyParser.json()
 
-
-router.post('/topsecret', jsonParser,async (req, res) => {
+router.post('/topsecret', jsonParser, async (req, res) => {
     const content = req.body;
     const distancias = obtenerDistancias(content);
     const mensajes = obtenerMensajes(content);
-    const mensaje =GetMessage(mensajes);
+    const mensaje = GetMessage(mensajes);
     const posiciones = await GetLocation(distancias);
     let response;
-    if (posiciones == 'NoSolutions' || mensaje == false){
+    if (posiciones == false || mensaje == false){
         res.statusCode = 400;
-        response = 'RESPONSE CODE: 404'
+        response = 'RESPONSE CODE: 404';
     }
-    else {
-        if (posiciones.length > 2){
-            position1 = {
+    else {   
+        response = {
+            "position": {
                 "x": posiciones[0],
                 "y": posiciones[1]
-            };
-            position2 = {
-                "x": posiciones[2],
-                "y": posiciones[3]
-            };
-            response = {
-                position1,
-                position2,
-                "message":mensaje
-            }
-        }else{
-            response = {
-                "position": {
-                    "x": posiciones[0],
-                    "y": posiciones[1]
-                },
-                "message":mensaje
-            }
+            },
+            "message":mensaje
+            
         }
-        
-        
         res.statusCode = 200;
     }
     
     res.send(response);
 });
-
-
 
 module.exports = router;

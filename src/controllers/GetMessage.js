@@ -15,10 +15,9 @@ Por eso cuando recorro las cadenas con el while, si los elementos vacíos se enc
 salteo esos caracteres pero no tomo el mensaje como inválido.
 */
 
-
 function GetMessage(messages){
     let corte = false, c = 0, msg = '', flairVacios = false;
-    while (c < messages[0].length && corte == true){
+    while (c < messages[0].length && corte == false){
         let cadenas =  messages.map(a => {
             return a[c]
         });
@@ -41,7 +40,7 @@ function GetMessage(messages){
         return false;
     }
     else {
-        msg = msg.slice(1, -1);
+        msg = msg.substring(1);
         return msg;
     }
      

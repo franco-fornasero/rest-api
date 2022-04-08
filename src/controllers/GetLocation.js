@@ -21,7 +21,7 @@ const coordSato = {
 async function GetLocation(distances){
     let sistemaEcuaciones = '';
     distances.forEach((element, i) => {
-        if (element != 0){
+        if (element != -1){
             switch (i){
                 case 0:
                     sistemaEcuaciones = `${sistemaEcuaciones} (${distances[0]})^2 = (x - ${coordKenobi.x})^2 + (y - ${coordKenobi.y})^2,`
@@ -35,16 +35,14 @@ async function GetLocation(distances){
             }
         }
     });
-    //  FIXME - sacar coma al final de las ecuaciuones
-    sistemaEcuaciones = `{${sistemaEcuaciones}}`;
-    //`{(${distances[0]})^2 = (x - ${coordKenobi.x})^2 + (y - ${coordKenobi.y})^2,(${distances[1]})^2 = (x - ${coordSkywalker.x})^2 + (y - ${coordSkywalker.y})^2, (${distances[2]})^2 = (x - ${coordSato.x})^2 + (y - ${coordSato.y})^2}`;
+    sistemaEcuaciones = `{${sistemaEcuaciones.substring(0, sistemaEcuaciones.length - 1)}}`;
     const sistemaEcuacionesURL = encodeURIComponent(sistemaEcuaciones);
-    const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuacionesURL}&format=plaintext&output=JSON&appid=HWHT7U-7QKUET5T4K`;
+    const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuacionesURL}&format=plaintext&output=JSON&includepodid=Solution&appid=HWHT7U-7QKUET5T4K`;
     const responseWolfram = await fetch(reqWolfram);
     const responseWolframJSON = await responseWolfram.json();
     let coordenadas = []
     responseWolframJSON.queryresult.pods.forEach(a => {
-        if ((a.title == 'Solution' || a.title == 'Solutions') && a.id == 'Solution'){
+        if (a.title == 'Solution' && a.id == 'Solution'){
             a.subpods.forEach(b => {
                 coordenadas = [...coordenadas, b.plaintext];
             });
@@ -52,7 +50,7 @@ async function GetLocation(distances){
         }
     });
     if (coordenadas.length == 0){
-        return "NoSolutions"
+        return false;
     }else {
         let posiciones = [];
         coordenadas.forEach( a => {
@@ -66,7 +64,7 @@ async function GetLocation(distances){
 }
 
 function obtenerDistancias(content){
-    let distances = [ 0, 0, 0];
+    let distances = [-1, -1, -1];
     content.satellites.forEach(satellite => {
         satellite.name = satellite.name.toLowerCase()
         switch (satellite.name){
