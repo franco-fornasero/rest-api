@@ -37,10 +37,10 @@ async function GetLocation(distances){
     });
     sistemaEcuaciones = `{${sistemaEcuaciones.substring(0, sistemaEcuaciones.length - 1)}}`;
     const sistemaEcuacionesURL = encodeURIComponent(sistemaEcuaciones);
-    const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuacionesURL}&format=plaintext&output=JSON&includepodid=Solution&appid=HWHT7U-7QKUET5T4K`;
+    const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuacionesURL}&format=plaintext&output=JSON&appid=HWHT7U-7QKUET5T4K`;
     const responseWolfram = await fetch(reqWolfram);
     const responseWolframJSON = await responseWolfram.json();
-    await console.log(responseWolframJSON.queryresult.pods[0]);
+    console.log(responseWolframJSON.queryresult.pods[0]);
 
     let coordenadas = []
     responseWolframJSON.queryresult.pods.forEach(a => {
