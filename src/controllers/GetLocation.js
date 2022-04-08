@@ -41,7 +41,7 @@ async function GetLocation(distances){
     const responseWolfram = await fetch(reqWolfram);
     const responseWolframJSON = await responseWolfram.json();
     let coordenadas = []
-    if (queryresult.pods){
+    if (responseWolframJSON.queryresult.pods){
         responseWolframJSON.queryresult.pods.forEach(a => {
             if (a.title == 'Solution' && a.id == 'Solution'){
                 a.subpods.forEach(b => {
