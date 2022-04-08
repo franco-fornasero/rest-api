@@ -40,7 +40,8 @@ async function GetLocation(distances){
     const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuacionesURL}&format=plaintext&output=JSON&includepodid=Solution&appid=HWHT7U-7QKUET5T4K`;
     const responseWolfram = await fetch(reqWolfram);
     const responseWolframJSON = await responseWolfram.json();
-    console.log(responseWolframJSON.queryresult.pods[0]);
+    await console.log(responseWolframJSON.queryresult.pods[0]);
+
     let coordenadas = []
     responseWolframJSON.queryresult.pods.forEach(a => {
         if (a.title == 'Solution' && a.id == 'Solution'){
