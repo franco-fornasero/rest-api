@@ -1,17 +1,22 @@
 const express = require('express');
 const fs = require('fs');
-const { GetLocation, obtenerDistancias } = require('../controllers/GetLocation');
+const { GetLocation, getDistances } = require('../controllers/GetLocation');
 const { GetMessage, obtenerMensajes } = require('../controllers/GetMessage');
 const router = express.Router();
-const bodyParser = require('body-parser');
-const jsonParser = bodyParser.json();
 
-router.post('/topsecret_split/:satellite', jsonParser, (req, res) => {
+router.post('/:satellite', (req, res) => {
+    // Este require hagamoslo afuera 
     const file = require('../data/satellites.json');
+
     const {satellite} = req.params;
+
+    //Es mejor directamente decir que si viene algo que no este contenido en un arreglo
+    // predefinido, que salga por badrequest con un middleware de chequeo de parametros. 
     if (satellite == 'kenobi' || satellite == 'skywalker' || satellite == 'sato'){
         let content = req.body;
         //Chequeo si el satelite ya está cargado en el arhivo json
+
+        ///  Revisar el uso de spanglish
         let existe = false;
         file.forEach(reg => {
             if (reg.name == satellite){
@@ -30,8 +35,10 @@ router.post('/topsecret_split/:satellite', jsonParser, (req, res) => {
             if (err) 
                 throw err;
             else 
+                // Usar morgan para logeo si se implementó
                 console.log('Archivo guardado');
         });
+        // Se devuelve siempre 200 por mas q rompa el guardado de archivo
         res.statusCode = 200;
     }
     else {
@@ -40,7 +47,7 @@ router.post('/topsecret_split/:satellite', jsonParser, (req, res) => {
     res.send();
 });
 
-router.get('/topsecret_split/', async (req, res) => {
+router.get('/', async (req, res) => {
     const file = require('../data/satellites.json');
     let response;
      // Si no tengo satélites o solo tengo 1 es imposible determinar la posición.
@@ -59,7 +66,7 @@ router.get('/topsecret_split/', async (req, res) => {
             response = 'No se puede determinar la posición y/o el mensaje con la información disponible';
         } 
         else {
-            const distancias = obtenerDistancias(satellitesJSON);
+            const distancias = getDistances(satellitesJSON);
             const posiciones = await GetLocation(distancias);
             if (posiciones == false){
                 res.statusCode = 400;
