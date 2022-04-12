@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 
+// Archivo de constantes 
 const coordKenobi = {
     'x':'-500',
     'y':'-200'
@@ -18,7 +19,8 @@ const coordSato = {
 //Por eso GetLocation SIEMPRE recibe 3 elementos, y en un orden predeterminado que se da en ObtenerDistancias
 //Si no tengo 1 de los datos, lo mando como -1 y lo ignoro, para respetar la firma que se pide.
 
-async function GetLocation(distances){
+//TODO pasar a notacion const = ... 
+async function getLocation(distances){
     let sistemaEcuaciones = '';
     distances.forEach((element, i) => {
         if (element != -1){
@@ -35,46 +37,58 @@ async function GetLocation(distances){
             }
         }
     });
-    sistemaEcuaciones = `{${sistemaEcuaciones.substring(0, sistemaEcuaciones.length - 1)}}`;
-    const sistemaEcuacionesURL = encodeURIComponent(sistemaEcuaciones);
-    const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuacionesURL}&format=plaintext&includepodid=Solution&output=JSON&appid=HWHT7U-7QKUET5T4K`;
-    const responseWolfram = await fetch(reqWolfram);
-    const responseWolframJSON = await responseWolfram.json();
-    let coordenadas = []
-    //Cuando no tiene solución el sistema de ecuaciones, pods no está en el json
-    if (responseWolframJSON.queryresult.pods){
-        responseWolframJSON.queryresult.pods.forEach(a => {
-            if (a.title == 'Solution' && a.id == 'Solution'){
-                a.subpods.forEach(b => {
-                    coordenadas = [...coordenadas, b.plaintext];
-                });
-            }
-        });
-    }
-    if (coordenadas.length == 0){
-        //Retorno false cuando el sistema no tiene una UNICA solución.
-        //Puede tener 2 soluciones, pero no sabría cual es la que corresponde a la posición de la nave
-        //En el caso que vengan 2 soluciones a.title es 'Solutions', entonces estaria descartando ese caso
-        return false;
-    }else {
-        //Adapto los datos a la firma de la funcion
-        let posiciones = [];
-        coordenadas.forEach( a => {
-            let cadenas = a.split(", ");
-            cadenas.forEach(b => {
-                posiciones = [...posiciones, parseFloat(eval(b.substring(4)))];
+    sistemaEcuaciones = `{${sistemaEcuaciones.substring(0, sistemaEcuaciones.length - 1)}}`; // Que hace esto ?
+    
+    //Todo esto en un servicio aparte. 
+        const sistemaEcuacionesURL = encodeURIComponent(sistemaEcuaciones);
+        const reqWolfram = `https://api.wolframalpha.com/v2/query?input=${sistemaEcuacionesURL}&format=plaintext&includepodid=Solution&output=JSON&appid=HWHT7U-7QKUET5T4K`;
+        const responseWolfram = await fetch(reqWolfram);
+        const responseWolframJSON = await responseWolfram.json();
+    
+    // Esto tambien 
+        let coordenadas = []
+        //Cuando no tiene solución el sistema de ecuaciones, pods no está en el json
+        if (responseWolframJSON.queryresult.pods){
+            responseWolframJSON.queryresult.pods.forEach(a => {
+                if (a.title == 'Solution' && a.id == 'Solution'){
+                    a.subpods.forEach(b => {
+                        coordenadas = [...coordenadas, b.plaintext];
+                    });
+                }
             });
-        });
-        return posiciones;
-    }
+        }
+        if (coordenadas.length == 0){
+            //Retorno false cuando el sistema no tiene una UNICA solución.
+            //Puede tener 2 soluciones, pero no sabría cual es la que corresponde a la posición de la nave
+            //En el caso que vengan 2 soluciones a.title es 'Solutions', entonces estaria descartando ese caso
+            return false;
+        }else {
+            //Adapto los datos a la firma de la funcion
+            let posiciones = [];
+            coordenadas.forEach( a => {
+                let cadenas = a.split(", ");
+                cadenas.forEach(b => {
+                    posiciones = [...posiciones, parseFloat(eval(b.substring(4)))];
+                });
+            });
+            return posiciones;
+        }
 }
 
-function obtenerDistancias(content){
+const getDistances = (satellites) => {
     //Filtrat las distancias de la request y enviarlas en un orden predeterminado
     let distances = [-1, -1, -1];
-    content.satellites.forEach(satellite => {
-        satellite.name = satellite.name.toLowerCase()
-        switch (satellite.name){
+    let satellitesNormalized = [];
+    
+    // TODO pasar a un utils
+    satellitesNormalized = satellites.map( s => {
+        s.name = s.name.toLowerCase();
+        return s;
+    });
+
+    satellitesNormalized.forEach(satellite => {
+        let { name } = satellites;
+        switch (name){
             case 'kenobi':
                 distances[0] = satellite.distance;
                 break;
@@ -91,6 +105,6 @@ function obtenerDistancias(content){
 }
 
 module.exports = {
-    GetLocation,
-    obtenerDistancias
+    getLocation,
+    getDistances,
 }
