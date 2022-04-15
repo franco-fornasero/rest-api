@@ -1,33 +1,34 @@
 const express = require('express');
-const { GetLocation, obtenerDistancias } = require('../controllers/GetLocation');
-const { GetMessage, obtenerMensajes} = require('../controllers/GetMessage')
+const { getLocation, getDistances } = require('../controllers/GetLocation');
+const { getMessage, getMessages } = require('../controllers/GetMessage');
 const router = express.Router();
-const bodyParser = require('body-parser')
-const jsonParser = bodyParser.json()
 
-router.post('/topsecret', jsonParser, async (req, res) => {
-    const content = req.body;
-    const distancias = obtenerDistancias(content);
-    const mensajes = obtenerMensajes(content);
-    const mensaje = GetMessage(mensajes);
-    const posiciones = await GetLocation(distancias);
+router.post('/', async (req, res) => {
+    //TODO -> Verificar si viene bien el body y const { satellites } = content;
+    const content = req.body; 
+    const distances = getDistances(content);
+    const messages = getMessages(content);
+    const message = getMessage(messages);
+    const positions = await getLocation(distances);
     let response = '';
-    if (posiciones == false || mensaje == false){
-        res.statusCode = 400;
+    if (positions == false || message == false){
+        res.status(400);
+        res.send();
     }
     else {   
         response = {
             "position": {
-                "x": posiciones[0],
-                "y": posiciones[1]
+                "x": positions[0],
+                "y": positions[1]
             },
-            "message":mensaje
+            "message":message
             
         }
-        res.statusCode = 200;
+        
     }
-    
-    res.send(response);
+    res.status(200);
+    console.log(response);
+    res.json(response);
 });
 
 module.exports = router;

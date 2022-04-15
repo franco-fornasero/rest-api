@@ -1,47 +1,46 @@
 const express = require('express');
 const fs = require('fs');
-const { GetLocation, obtenerDistancias } = require('../controllers/GetLocation');
-const { GetMessage, obtenerMensajes } = require('../controllers/GetMessage');
+const { getLocation, getDistances } = require('../controllers/getLocation');
+const { getMessage, getMessages } = require('../controllers/getMessage');
 const router = express.Router();
-const bodyParser = require('body-parser');
-const jsonParser = bodyParser.json();
+const file = require('../data/satellites.json');
 
-router.post('/topsecret_split/:satellite', jsonParser, (req, res) => {
-    const file = require('../data/satellites.json');
+router.post('/:satellite', (req, res) => {
     const {satellite} = req.params;
     if (satellite == 'kenobi' || satellite == 'skywalker' || satellite == 'sato'){
         let content = req.body;
         //Chequeo si el satelite ya está cargado en el arhivo json
-        let existe = false;
+        let exists = false;
         file.forEach(reg => {
             if (reg.name == satellite){
                 reg.message = content.message;
                 reg.distance = content.distance;
-                existe = true;
+                exists = true;
             }
         });
         //Si no está cargado, lo agrego
-        if (existe == false){
+        if (exists == false){
             content["name"] = satellite;
             file.push(content);
         }
         //Sobreescribo el archivo con los nuevos datos
+        //TODO -> Verificar que pasa cuando hay un error al escribir el archivo
         fs.writeFile('src/data/satellites.json', JSON.stringify(file, null, 4), (err) => {
             if (err) 
                 throw err;
             else 
+            //TODO -> morgan para log
                 console.log('Archivo guardado');
         });
-        res.statusCode = 200;
+        res.status(200);
     }
     else {
-        res.statusCode = 400;
+        res.status(400);
     }
     res.send();
 });
 
-router.get('/topsecret_split/', async (req, res) => {
-    const file = require('../data/satellites.json');
+router.get('/', async (req, res) => {
     let response;
      // Si no tengo satélites o solo tengo 1 es imposible determinar la posición.
     if (file.length < 2){
@@ -51,16 +50,16 @@ router.get('/topsecret_split/', async (req, res) => {
     else {
         const satellites = require('../data/satellites.json');
         const satellitesJSON = {satellites}
-        const mensajes = obtenerMensajes(satellitesJSON);
-        const mensaje = GetMessage(mensajes);
+        const mensajes = getMessages(satellitesJSON);
+        const mensaje = getMessage(mensajes);
         //Controlo esto acá porque me parece mejor cortar la ejecución antes de hacer la request a la api
         if (mensaje == false){
             res.statusCode = 400;
             response = 'No se puede determinar la posición y/o el mensaje con la información disponible';
         } 
         else {
-            const distancias = obtenerDistancias(satellitesJSON);
-            const posiciones = await GetLocation(distancias);
+            const distancias = getDistances(satellitesJSON);
+            const posiciones = await getLocation(distancias);
             if (posiciones == false){
                 res.statusCode = 400;
                 response = 'No se puede determinar la posición y/o el mensaje con la información disponible';

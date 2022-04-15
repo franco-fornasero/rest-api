@@ -1,56 +1,57 @@
 /* Supongo que puede darse el caso de que todos los satelites que estoy controlando tengan desface,
-lo que produciría que las cadenas de mensajes quedaran de la siguiente forma incluso luego de limpiar el
-desface en la funcion "obtenerMensajes"
+lo que produciría que las cadenas de messages quedaran de la siguiente forma incluso luego de limpiar el
+desface en la funcion "obtenermessages"
 
 ["", "", ...]
 ["", "", ...]
 
 Por eso cuando recorro las cadenas con el while, si los elementos vacíos se encuentran solo al principio, 
-salteo esos caracteres pero no tomo el mensaje como inválido.
+salteo esos caracteres pero no tomo el message como inválido.
 */
 
-function GetMessage(messages){
-    let corte = false, c = 0, msg = '', flairVacios = false;
-    while (c < messages[0].length && corte == false){
+const getMessage = messages => {
+    let stop = false, c = 0, msg = '', flagEmpty = false;
+    while (c < messages[0].length && stop == false){
         let cadenas =  messages.map(cadena => {
             return cadena[c]
         });
-        const palabra = retornarNoVacia(cadenas);
-        if (palabra == ''){
-            if (c == 0 || flairVacios == true){
+        const word = returnNotEmpty(cadenas);
+        if (word == ''){
+            if (c == 0 || flagEmpty == true){
                 //Esto lo necesito para no cortar si llegan varias cadenas vacias al principio del arreglo, como en el ejemplo de arriba.
-                flairVacios = true;
+                flagEmpty = true;
             }else {
-                corte = true;
+                stop = true;
             }
         }
         else{
-            flairVacios = false;
-            msg = `${msg} ${palabra}`;
+            flagEmpty = false;
+            msg = `${msg} ${word}`;
         }  
         c++;
     }
-    if (corte == true) {
+    if (stop == true) {
         return false;
     }
     else {
-        //Eliminar el primer espacio que queda en el mensaje
+        //Eliminar el primer espacio que queda en el message
         msg = msg.substring(1);
         return msg;
     }     
 }
 
-function retornarNoVacia(cadenas){
-    let palabra = ''
-    cadenas.forEach(mensaje => {
-       if (mensaje != ''){
-           palabra = mensaje; 
+const returnNotEmpty = cadenas =>{
+    let word = ''
+    cadenas.forEach(message => {
+       if (message != ''){
+           word = message; 
        }
     });
-    return palabra;
+    return word;
 }
 
-function obtenerMensajes(content){
+
+const getMessages = content => {
     let messages = content.satellites.map(satellite => {
         return satellite.message;
     });
@@ -69,6 +70,6 @@ function obtenerMensajes(content){
 }
 
 module.exports = {
-    GetMessage,
-    obtenerMensajes 
+    getMessages,
+    getMessage 
 }
