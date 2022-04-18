@@ -2,9 +2,7 @@ const express = require('express');
 const { getLocation, getDistances } = require('../controllers/locations');
 const { getMessage, getMessages } = require('../controllers/messages');
 const { checkName, updateFile, quantyOfSatellites, buildBody,buildResponse } = require('../controllers/middlewares')
-
 const router = express.Router();
-const file = require('../data/satellites.json');
 
 router.post('/:satellite', checkName, updateFile)
 

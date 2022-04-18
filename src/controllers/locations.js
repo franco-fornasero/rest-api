@@ -53,18 +53,18 @@ const buildSystemEquations = (distances) => {
         if (element != -1) {
             switch (i) {
                 case 0:
-                    systemEquation = `${systemEquation} (${distances[0]})^2 = (x - ${coordKenobi.x})^2 + (y - ${coordKenobi.y})^2,`
+                    systemEquations = `${systemEquations} (${distances[0]})^2 = (x - ${coordKenobi.x})^2 + (y - ${coordKenobi.y})^2,`
                     break;
                 case 1:
-                    systemEquation = `${systemEquation} (${distances[1]})^2 = (x - ${coordSkywalker.x})^2 + (y - ${coordSkywalker.y})^2,`
+                    systemEquations = `${systemEquations} (${distances[1]})^2 = (x - ${coordSkywalker.x})^2 + (y - ${coordSkywalker.y})^2,`
                     break;
                 case 2:
-                    systemEquation = `${systemEquation} (${distances[2]})^2 = (x - ${coordSato.x})^2 + (y - ${coordSato.y})^2,`
+                    systemEquations = `${systemEquations} (${distances[2]})^2 = (x - ${coordSato.x})^2 + (y - ${coordSato.y})^2,`
                     break;
             }
         }
     });
-    systemEquations = `{${systemEquation.substring(0, systemEquation.length - 1)}}`;
+    systemEquations = `{${systemEquations.substring(0, systemEquations.length - 1)}}`;
     return systemEquations;
 }
 
