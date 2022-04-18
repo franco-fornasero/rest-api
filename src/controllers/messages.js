@@ -10,6 +10,7 @@ salteo esos caracteres pero no tomo el message como inválido.
 */
 
 const getMessage = (req, res, next) => {
+    //TODO ->No veo claro como podría dividir esto en mas funciones
     const { messages } = req;
     let stop = false, c = 0, msg = '', flagEmpty = false;
     while (c < messages[0].length && stop == false){

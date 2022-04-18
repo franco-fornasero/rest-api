@@ -10,13 +10,15 @@ const requestWolfram = async systemEquation => {
 
 const cleanResult = responseWolframJSON => {
     let coordenadas = [];
-    responseWolframJSON.queryresult.pods.forEach(a => {
-        if (a.title == 'Solution' && a.id == 'Solution'){
-            a.subpods.forEach(b => {
-                coordenadas = [...coordenadas, b.plaintext];
-            });
-        }
-    });
+    if (responseWolframJSON.queryresult.pods){
+        responseWolframJSON.queryresult.pods.forEach(a => {
+            if (a.title == 'Solution' && a.id == 'Solution'){
+                a.subpods.forEach(b => {
+                    coordenadas = [...coordenadas, b.plaintext];
+                });
+            }
+        });
+    }
     return coordenadas;
     
 }

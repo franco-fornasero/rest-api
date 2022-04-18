@@ -13,8 +13,16 @@ const coordSato = {
     'y':'100'
 };
 
+const names = [
+    'kenobi',
+    'skywalker',
+    'sato'
+]
+
 module.exports = {
     coordKenobi,
     coordSkywalker,
-    coordSato
+    coordSato,
+    names
 }
+

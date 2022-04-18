@@ -1,7 +1,7 @@
 const express = require('express');
-const { getLocation, getDistances, checkBody } = require('../controllers/locations');
+const { getLocation, getDistances } = require('../controllers/locations');
 const { getMessage, getMessages } = require('../controllers/messages');
-const { buildResponse } = require('../controllers/middlewares');
+const { buildResponse, checkBody } = require('../controllers/middlewares');
 const router = express.Router();
 
 router.use(checkBody);
