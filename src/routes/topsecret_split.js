@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
-const { getLocation, getDistances } = require('../controllers/getLocation');
-const { getMessage, getMessages } = require('../controllers/getMessage');
+const { getLocation, getDistances } = require('../controllers/locations');
+const { getMessage, getMessages } = require('../controllers/messages');
 const router = express.Router();
 const file = require('../data/satellites.json');
 

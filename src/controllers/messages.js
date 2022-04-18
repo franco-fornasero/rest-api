@@ -9,7 +9,8 @@ Por eso cuando recorro las cadenas con el while, si los elementos vacíos se enc
 salteo esos caracteres pero no tomo el message como inválido.
 */
 
-const getMessage = messages => {
+const getMessage = (req, res, next) => {
+    const { messages } = req;
     let stop = false, c = 0, msg = '', flagEmpty = false;
     while (c < messages[0].length && stop == false){
         let cadenas =  messages.map(cadena => {
@@ -31,13 +32,13 @@ const getMessage = messages => {
         c++;
     }
     if (stop == true) {
-        return false;
+        req.msg = false;
     }
     else {
         //Eliminar el primer espacio que queda en el message
-        msg = msg.substring(1);
-        return msg;
-    }     
+        req.msg = msg.substring(1);
+    }  
+    next();   
 }
 
 const returnNotEmpty = cadenas =>{
@@ -51,8 +52,9 @@ const returnNotEmpty = cadenas =>{
 }
 
 
-const getMessages = content => {
-    let messages = content.satellites.map(satellite => {
+const getMessages = (req, res, next) => {
+    const {satellites} = req.body;
+    let messages = satellites.map(satellite => {
         return satellite.message;
     });
     //Eliminar desfase
@@ -66,7 +68,8 @@ const getMessages = content => {
             message = message.splice(0, message.length - lengthMin);
         }
     });
-    return messages;
+    req.messages = messages;
+    next();
 }
 
 module.exports = {
